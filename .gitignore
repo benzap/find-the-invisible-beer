@@ -17,6 +17,7 @@ resources/*
 resources/public/*
 
 !resources/public/images
+!resources/public/audio
 !resources/public/js
 resources/public/js/*
 
