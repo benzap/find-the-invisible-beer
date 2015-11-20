@@ -1,12 +1,35 @@
 (ns fib.core)
 
-(defonce beer-count (atom 0))
+(defonce MAX-INT 9007199254740992)
+(defonce state 
+  (atom 
+   {:start-game? false
+    :beer-count 0
+    :beer-proximity MAX-INT
+    :seek-interval 500 ;ms
+    }))
+
+(defonce audio-assets 
+  [{:name :proximity-sound-0 :url "resources/public/audio/test-0.wav"}
+   {:name :proximity-sound-1 :url "resources/public/audio/test-1.wav"}
+   {:name :proximity-sound-2 :url "resources/public/audio/test-2.wav"}
+   {:name :proximity-sound-3 :url "resources/public/audio/test-3.wav"}
+   {:name :proximity-sound-4 :url "resources/public/audio/test-4.wav"}
+   {:name :proximity-sound-5 :url "resources/public/audio/test-5.wav"}
+   {:name :proximity-sound-6 :url "resources/public/audio/test-6.wav"}
+   {:name :proximity-sound-7 :url "resources/public/audio/test-7.wav"}
+   {:name :proximity-sound-8 :url "resources/public/audio/test-8.wav"}
+   {:name :proximity-sound-9 :url "resources/public/audio/test-9.wav"}
+   {:name :proximity-sound-10 :url "resources/public/audio/test-10.wav"}
+   {:name :beer-found :url "resources/public/audio/test-found.wav"}
+   ])
+
 (defn inc-beer-count! []
-  (let [count (swap! beer-count inc)
+  (swap! state update :beer-count inc)
+  (let [count (-> @state :beer-count)
         dom-beer-count (.querySelector js/document "#beer-count")]
     (aset dom-beer-count "innerHTML" (str count))
     ))
-
 
 ;;
 ;; audio
@@ -26,18 +49,10 @@
                          (.log js/console (str "Loaded Audio: " sound-path))
                          ))
     ))
-(preload-sound :proximity-sound-0 "resources/public/audio/test-0.wav")
-(preload-sound :proximity-sound-1 "resources/public/audio/test-1.wav")
-(preload-sound :proximity-sound-2 "resources/public/audio/test-2.wav")
-(preload-sound :proximity-sound-3 "resources/public/audio/test-3.wav")
-(preload-sound :proximity-sound-4 "resources/public/audio/test-4.wav")
-(preload-sound :proximity-sound-5 "resources/public/audio/test-5.wav")
-(preload-sound :proximity-sound-6 "resources/public/audio/test-6.wav")
-(preload-sound :proximity-sound-7 "resources/public/audio/test-7.wav")
-(preload-sound :proximity-sound-8 "resources/public/audio/test-8.wav")
-(preload-sound :proximity-sound-9 "resources/public/audio/test-9.wav")
-(preload-sound :proximity-sound-10 "resources/public/audio/test-10.wav")
-(preload-sound :beer-found "resources/public/audio/test-found.wav")
+
+;; Preload the audio assets
+(doseq [{name :name url :url} audio-assets]
+  (preload-sound name url))
 
 (defn play-sound [sound-name]
   (if-let [audio (-> @audio-listing sound-name)]
@@ -84,39 +99,52 @@
           ty (- mouse-y beer-y)
           mag (Math/sqrt (+ (* tx tx) (* ty ty)))
           ]
-      (cond
-        (< mag 5)
-        (play-sound :proximity-sound-10)
-        (< mag 10)
-        (play-sound :proximity-sound-9)
-        (< mag 20)
-        (play-sound :proximity-sound-8)
-        (< mag 30)
-        (play-sound :proximity-sound-7)
-        (< mag 40)
-        (play-sound :proximity-sound-6)
-        (< mag 50)
-        (play-sound :proximity-sound-5)
-        (< mag 60)
-        (play-sound :proximity-sound-4)
-        (< mag 75)
-        (play-sound :proximity-sound-3)
-        (< mag 100)
-        (play-sound :proximity-sound-2)
-        (< mag 150)
-        (play-sound :proximity-sound-1)
-        :else
-        (play-sound :proximity-sound-0)
-      ))))
+      (swap! state assoc :beer-proximity mag)
+      )))
+
+(defn alert-beer-groping-hand []
+  (let [mag (-> @state :beer-proximity)]
+    (cond
+      (< mag 5)
+      (play-sound :proximity-sound-10)
+      (< mag 10)
+      (play-sound :proximity-sound-9)
+      (< mag 20)
+      (play-sound :proximity-sound-8)
+      (< mag 30)
+      (play-sound :proximity-sound-7)
+      (< mag 40)
+      (play-sound :proximity-sound-6)
+      (< mag 50)
+      (play-sound :proximity-sound-5)
+      (< mag 60)
+      (play-sound :proximity-sound-4)
+      (< mag 75)
+      (play-sound :proximity-sound-3)
+      (< mag 100)
+      (play-sound :proximity-sound-2)
+      (< mag 150)
+      (play-sound :proximity-sound-1)
+      :else
+      (play-sound :proximity-sound-0)
+      )))
 
 ;;
 ;; bindings
 ;;
 
 ;; Start Game Event
+(defonce start-game? (atom false))
 (let [dom-start-button (.querySelector js/document "#beer-start-dialog")]
   (.addEventListener dom-start-button "click" start-game))
 
 ;; Mouse movement event
 (let [dom-beer-area (.querySelector js/document "#beer-area")]
   (.addEventListener dom-beer-area "mousemove" track-beer-groping-hand))
+
+;; Alert of proximity when the game is started
+(.setInterval js/window 
+              (fn []
+                (.log js/console "Test Interval")
+                (alert-beer-groping-hand)
+                ) 500)
