@@ -81,9 +81,9 @@
     (reset! current-hidden-beer beer-element)
     ))
 
-(defonce game-started? (atom false))
+
 (defn start-game []
-  (reset! game-started? true)
+  (swap! state assoc :start-game? true)
   (inc-beer-count!)
   (generate-hidden-beer)
   (play-sound :proximity-sound-0)
@@ -99,6 +99,7 @@
           ty (- mouse-y beer-y)
           mag (Math/sqrt (+ (* tx tx) (* ty ty)))
           ]
+      (.log js/console "Mag" mag)
       (swap! state assoc :beer-proximity mag)
       )))
 
@@ -134,7 +135,6 @@
 ;;
 
 ;; Start Game Event
-(defonce start-game? (atom false))
 (let [dom-start-button (.querySelector js/document "#beer-start-dialog")]
   (.addEventListener dom-start-button "click" start-game))
 
@@ -145,6 +145,6 @@
 ;; Alert of proximity when the game is started
 (.setInterval js/window 
               (fn []
-                (.log js/console "Test Interval")
-                (alert-beer-groping-hand)
+                (when (-> @state :start-game?)
+                  (alert-beer-groping-hand))
                 ) 500)
