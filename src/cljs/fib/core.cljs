@@ -1,4 +1,8 @@
-(ns fib.core)
+(ns fib.core
+  (:require [fib.random :as random]
+            [fib.dom :as dom]
+            [fib.event :as event]
+            [fib.audio :as audio]))
 
 (defonce MAX-INT 9007199254740992)
 (defonce state 
@@ -7,6 +11,7 @@
     :beer-count 0
     :beer-proximity MAX-INT
     :seek-interval 500 ;ms
+    :current-hidden-beer nil
     }))
 
 (defonce audio-assets 
@@ -24,52 +29,42 @@
    {:name :beer-found :url "resources/public/audio/test-found.wav"}
    ])
 
+(def div-list
+  {:beer-title (dom/query "#beer-title")
+   :beer-area (dom/query "#beer-area")
+   :beer-scoreboard (dom/query "#beer-scoreboard")
+   :beer-count (dom/query "#beer-count")
+   :beer-start-dialog (dom/query "#beer-start-dialog")
+   :beer-dialog (dom/query "#beer-dialog")
+   })
+
 (defn inc-beer-count! []
   (swap! state update :beer-count inc)
   (let [count (-> @state :beer-count)
-        dom-beer-count (.querySelector js/document "#beer-count")]
+        dom-beer-count (div-list :beer-count)]
     (aset dom-beer-count "innerHTML" (str count))
-    ))
-
-;;
-;; audio
-;;
-(defonce audio-listing (atom {}))
-(defn preload-sound [sound-name sound-path]
-  (let [audio (js/Audio.)]
-    (doto audio
-      (aset "preload" "auto")
-      (aset "src" sound-path)
-      )
-    (swap! audio-listing assoc sound-name audio)
-    
-    ;; Log the audio files that are loaded
-    (.addEventListener audio "canplaythrough" 
-                       (fn []
-                         (.log js/console (str "Loaded Audio: " sound-path))
-                         ))
     ))
 
 ;; Preload the audio assets
 (doseq [{name :name url :url} audio-assets]
-  (preload-sound name url))
+  (audio/preload-sound name url))
 
-(defn play-sound [sound-name]
-  (if-let [audio (-> @audio-listing sound-name)]
-    (.play audio)
+
+
+(defn beer-click-event [e]
+  (when-let [beer-dom (-> @state :current-hidden-beer)]
+    (dom/remove-element-from-parent beer-dom)
+    (swap! state merge {:start-game? false :current-hidden-beer nil})
+    (inc-beer-count!)
+    (dom/show (div-list :beer-start-dialog))
     ))
 
-(defn pick-value-in-range [start end]
-  (let [t (- end start)]
-    (+ (rand t) start)))
-
-(defonce current-hidden-beer (atom nil))
 (defn generate-hidden-beer []
   (let [beer-area (.querySelector js/document "#beer-area")
         screen-width (aget beer-area "offsetWidth")
         screen-height (aget beer-area "offsetHeight")
-        rand-x (pick-value-in-range 25 (- screen-width 25))
-        rand-y (pick-value-in-range 25 (- screen-height 25))
+        rand-x (random/pick-value-in-range 25 (- screen-width 25))
+        rand-y (random/pick-value-in-range 25 (- screen-height 25))
         beer-element (.createElement js/document "div")
         ]
     (doto beer-element
@@ -77,58 +72,63 @@
       (aset "style" "left" (str rand-x "px"))
       (aset "style" "top" (str rand-y "px"))
       )
-    (.appendChild beer-area beer-element)
-    (reset! current-hidden-beer beer-element)
+
+    ;; apply click event
+    (.addEventListener beer-element "click" beer-click-event)
+
+    beer-element
     ))
 
+(defn event-start-game []
+  (let [hidden-beer (generate-hidden-beer)
+        beer-area (div-list :beer-area)
+        ]
+    (swap! state assoc :start-game? true)
+    (dom/hide (div-list :beer-start-dialog))
 
-(defn start-game []
-  (swap! state assoc :start-game? true)
-  (inc-beer-count!)
-  (generate-hidden-beer)
-  (play-sound :proximity-sound-0)
-  )
+    ;;Place the beer in the arena
+    (.appendChild beer-area hidden-beer)
+    (swap! state assoc :current-hidden-beer hidden-beer)
+    ))
 
 (defn track-beer-groping-hand [event]
-  (when-let [beer-element @current-hidden-beer]
-    (let [mouse-x (-> event .-layerX)
-          mouse-y (-> event .-layerY)
+  (when-let [beer-element (-> @state :current-hidden-beer)]
+    (let [
+          [mouse-x mouse-y] (event/get-mouse-location event)
           beer-x (.parseInt js/window (aget beer-element "style" "left"))
           beer-y (.parseInt js/window (aget beer-element "style" "top"))
           tx (- mouse-x beer-x)
           ty (- mouse-y beer-y)
           mag (Math/sqrt (+ (* tx tx) (* ty ty)))
           ]
-      (.log js/console "Mag" mag)
       (swap! state assoc :beer-proximity mag)
       )))
 
-(defn alert-beer-groping-hand []
-  (let [mag (-> @state :beer-proximity)]
-    (cond
-      (< mag 5)
-      (play-sound :proximity-sound-10)
-      (< mag 10)
-      (play-sound :proximity-sound-9)
-      (< mag 20)
-      (play-sound :proximity-sound-8)
-      (< mag 30)
-      (play-sound :proximity-sound-7)
-      (< mag 40)
-      (play-sound :proximity-sound-6)
-      (< mag 50)
-      (play-sound :proximity-sound-5)
-      (< mag 60)
-      (play-sound :proximity-sound-4)
-      (< mag 75)
-      (play-sound :proximity-sound-3)
-      (< mag 100)
-      (play-sound :proximity-sound-2)
-      (< mag 150)
-      (play-sound :proximity-sound-1)
-      :else
-      (play-sound :proximity-sound-0)
-      )))
+(defn alert-beer-groping-hand [beer-proximity]
+  (cond
+    (< beer-proximity 5)
+    (audio/play-sound :proximity-sound-10)
+    (< beer-proximity 10)
+    (audio/play-sound :proximity-sound-9)
+    (< beer-proximity 20)
+    (audio/play-sound :proximity-sound-8)
+    (< beer-proximity 30)
+    (audio/play-sound :proximity-sound-7)
+    (< beer-proximity 40)
+    (audio/play-sound :proximity-sound-6)
+    (< beer-proximity 50)
+    (audio/play-sound :proximity-sound-5)
+    (< beer-proximity 60)
+    (audio/play-sound :proximity-sound-4)
+    (< beer-proximity 75)
+    (audio/play-sound :proximity-sound-3)
+    (< beer-proximity 150)
+    (audio/play-sound :proximity-sound-2)
+    (< beer-proximity 300)
+    (audio/play-sound :proximity-sound-1)
+    (< beer-proximity 600)
+    (audio/play-sound :proximity-sound-0)
+    ))
 
 ;;
 ;; bindings
@@ -136,7 +136,7 @@
 
 ;; Start Game Event
 (let [dom-start-button (.querySelector js/document "#beer-start-dialog")]
-  (.addEventListener dom-start-button "click" start-game))
+  (.addEventListener dom-start-button "click" event-start-game))
 
 ;; Mouse movement event
 (let [dom-beer-area (.querySelector js/document "#beer-area")]
@@ -145,6 +145,9 @@
 ;; Alert of proximity when the game is started
 (.setInterval js/window 
               (fn []
-                (when (-> @state :start-game?)
-                  (alert-beer-groping-hand))
-                ) 500)
+                (let [{start-game? :start-game?
+                       beer-proximity :beer-proximity} 
+                      @state]
+                  (when start-game? 
+                    (alert-beer-groping-hand beer-proximity)))
+                ) (:seek-interval @state))
