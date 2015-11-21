@@ -1,0 +1,7 @@
+#+TITLE: Find the Invisible Beer Web Game
+#+AUTHOR: Benjamin Zaporzan
+
+Inspired by [[http://www.findtheinvisiblecow.com/]]
+
+- Written in Clojurescript using vanilla javascript
+- Tested on Chrome and Firefox
