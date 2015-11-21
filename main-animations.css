@@ -29,6 +29,7 @@
 /* drop down from the top */
 .drop-down-0 {
     animation: drop-down-0 1s ease-in-out;
+    animation-fill-mode: forwards;
 }
 
 @keyframes drop-down-0 {

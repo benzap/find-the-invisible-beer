@@ -64,13 +64,13 @@ body {
     right: 5px;
     bottom: 50px;
     border-radius: 20px;
-    background-color: #9EBE8E;
+    background-color: #8FD987;
 }
 
 #beer-scoreboard {
     position: fixed;
     color: #3A210C;
-    top: 0;
+    top: -50px;
     right: 0;
     padding-right: 20px;
     text-align: right;
@@ -133,4 +133,64 @@ body {
 
 .divider {
     padding: 0 10px 0 10px;
+}
+
+#beer-dialog {
+    position: absolute;
+    top: 20%;
+    right: 20%;
+    left: 20%;
+    height: 400px;
+    border-radius: 10px;
+    background-color: #D5B79E;
+    border: 2px solid #B3957C;
+}
+
+#beer-dialog-header {
+    position: absolute;
+    top: 0;
+    height: 75px;
+    line-height: 75px;
+    vertical-align: center;
+    width: 100%;
+    font-size: 200%;
+    text-align: center;
+}
+
+#beer-dialog-content {
+    position: absolute;
+    top: 75px;
+    height: 275px;
+    width: 100%;
+    padding: 25px;
+}
+
+#beer-dialog-footer {
+    position: absolute;
+    bottom: 0;
+    height: 50px;
+    width: 100%;
+}
+
+#beer-dialog-left-button {
+    float: left;
+    width: 50%;
+}
+
+#beer-dialog-right-button {
+    font-family: 'Lobster', cursive;
+    float: right;
+    width: 50%;
+}
+
+.dialog-button {
+    line-height: 50px;
+    vertical-align: center;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.dialog-button:hover {
+    background-color: #E6C8AF;
 }
