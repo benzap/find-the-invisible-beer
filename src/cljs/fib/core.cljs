@@ -15,11 +15,11 @@
     }))
 
 (defonce audio-assets 
-  [{:name :proximity-sound-0 :url "resources/public/audio/test-0.wav"}
-   {:name :proximity-sound-1 :url "resources/public/audio/test-1.wav"}
-   {:name :proximity-sound-2 :url "resources/public/audio/test-2.wav"}
-   {:name :proximity-sound-3 :url "resources/public/audio/test-3.wav"}
-   {:name :proximity-sound-4 :url "resources/public/audio/test-4.wav"}
+  [{:name :proximity-sound-0 :url "resources/public/audio/beer-0.wav"}
+   {:name :proximity-sound-1 :url "resources/public/audio/beer-1.wav"}
+   {:name :proximity-sound-2 :url "resources/public/audio/beer-2.wav"}
+   {:name :proximity-sound-3 :url "resources/public/audio/beer-3.wav"}
+   {:name :proximity-sound-4 :url "resources/public/audio/beer-4.wav"}
    {:name :proximity-sound-5 :url "resources/public/audio/test-5.wav"}
    {:name :proximity-sound-6 :url "resources/public/audio/test-6.wav"}
    {:name :proximity-sound-7 :url "resources/public/audio/test-7.wav"}

@@ -6,7 +6,7 @@
 /* fade in from initial load */
 
 .fade-in-0 {
-    animation: fade-in 1s;
+    animation: fade-in 2s;
 }
 
 .fade-in-1 {
@@ -34,6 +34,15 @@
 @keyframes drop-down-0 {
     from { top: -50px; }
     to   { top: 0; }
+}
+
+.drop-up-0 {
+    animation: drop-up-0 1s ease-in-out;
+}
+
+@keyframes drop-up-0 {
+    from { bottom: -50px; }
+    to   { bottom: 0; }
 }
 
 .color-fade-green {
