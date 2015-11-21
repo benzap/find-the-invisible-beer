@@ -1,0 +1,41 @@
+/*
+  collection of animations
+*/
+
+
+/* fade in from initial load */
+
+.fade-in-0 {
+    animation: fade-in 1s;
+}
+
+.fade-in-1 {
+    animation: fade-in 1s;
+    animation-delay: 0.5s;
+    animation-fill-mode: forwards;
+}
+
+.fade-in-2 {
+    animation: fade-in 1s;
+    animation-delay: 1s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* drop down from the top */
+.drop-down-0 {
+    animation: drop-down-0 1s ease-in-out;
+}
+
+@keyframes drop-down-0 {
+    from { top: -50px; }
+    to   { top: 0; }
+}
+
+.color-fade-green {
+    animation: 
+}

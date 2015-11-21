@@ -14,13 +14,18 @@ Color Palette
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    font-family: helvetica;
+    font-family: 'Pacifico', cursive;
+}
+
+a {
+    text-decoration: none;
+    color: #3A350C;
 }
 
 body {
     width: 100%;
     height: 100%;
-    background-color: #7C9C6C;
+    background-color: #B3957C;
 }
 
 #beer-title {
@@ -34,10 +39,13 @@ body {
 
 #beer-area {
     position: absolute;
+    opacity: 0;
     top: 50px;
-    width: 100%;
-    height: 90%;
-    background-color: #8DAD7D;
+    left: 5px;
+    right: 5px;
+    bottom: 50px;
+    border-radius: 20px;
+    background-color: #9EBE8E;
 }
 
 #beer-scoreboard {
@@ -53,10 +61,13 @@ body {
 #beer-count {
     font-size: 150%;
     color: #3A350C;
+    font-family: 'Inconsolata', ;
 }
 
 #beer-start-dialog {
+    opacity: 0;
     position: absolute;
+    font-family: 'Shadows Into Light', cursive;
     top: 40%;
     right: 40%;
     left: 40%;
@@ -71,18 +82,33 @@ body {
     cursor: pointer;
 }
 
+#beer-start-dialog > span {
+    position: relative;
+    right: 7px;
+}
+
 #beer-start-dialog:hover {
     color: #fff;
 }
 
 #beer-start-dialog:active {
     color: #163200;
+    padding-top: 3px;
 }
 
 .hidden-beer {
     position: absolute;
-    background-color: black;
+    /* background-color: black; */
     width: 3px;
     height: 3px;
     cursor: pointer;
+}
+
+#footer {
+    position: absolute;
+    bottom: 0;
+    height: 50px;
+    width: 100%;
+    text-align: center;
+    line-height: 50px;
 }

@@ -49,14 +49,13 @@
 (doseq [{name :name url :url} audio-assets]
   (audio/preload-sound name url))
 
-
-
 (defn beer-click-event [e]
   (when-let [beer-dom (-> @state :current-hidden-beer)]
     (dom/remove-element-from-parent beer-dom)
     (swap! state merge {:start-game? false :current-hidden-beer nil})
     (inc-beer-count!)
     (dom/show (div-list :beer-start-dialog))
+    (audio/play-sound :beer-found)
     ))
 
 (defn generate-hidden-beer []

@@ -1,18 +1,24 @@
 <html>
 	<head>
 		<title>Find the Hidden Beer!</title>
+		<link href='https://fonts.googleapis.com/css?family=Shadows+Into+Light|Pacifico|Inconsolata' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="main-animations.css">
 		<link rel="stylesheet" type="text/css" href="main.css">
 	</head>
 	<body>
-		<div id="beer-title">Find the Hidden Beer!</div>
-		<div id="beer-area"></div>
-		<div id="beer-scoreboard">
-			You have found <span id="beer-count">0</span> beers
+		<div id="beer-title" class="fade-in-0">Find the Hidden Beer!</div>
+		<div id="beer-area" class="fade-in-1"></div>
+		<div id="beer-scoreboard" class="drop-down-0">
+			You have found <span id="beer-count"">0</span> beers
 		</div>
-		<div id="beer-start-dialog">
+		<div id="beer-start-dialog" class="fade-in-2">
 			<span>Start</span>
 		</div>
 		<div id="beer-dialog"></div>
+		<div id="footer">
+			<a href="https://github.com/benzap/find-the-invisible-beer">github project page</a>
+		</div>
+
 		<script src="resources/public/js/fib.js"></script>
 	</body>
 </html>
