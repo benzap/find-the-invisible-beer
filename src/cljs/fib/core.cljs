@@ -54,7 +54,8 @@
     (dom/remove-element-from-parent beer-dom)
     (swap! state merge {:start-game? false :current-hidden-beer nil})
     (inc-beer-count!)
-    (dom/show (div-list :beer-start-dialog))
+    ;;(dom/show (div-list :beer-start-dialog))
+    (dom/show (div-list :beer-dialog))
     (audio/play-sound :beer-found)
     ))
 
@@ -136,6 +137,24 @@
 ;; Start Game Event
 (let [dom-start-button (.querySelector js/document "#beer-start-dialog")]
   (.addEventListener dom-start-button "click" event-start-game))
+
+;;
+;; Dialog Events
+;;
+
+;; dialog play again event
+(let [button-play-again (dom/query "#beer-dialog-left-button")]
+  (.addEventListener button-play-again "click" 
+                     (fn [] 
+                       (event-start-game)
+                       (dom/hide (div-list :beer-dialog)))))
+
+;; dialog visit dawson trail page
+(let [button-visit-dawson (dom/query "#beer-dialog-right-button")]
+  (.addEventListener button-visit-dawson "click" 
+                     (fn [] (aset js/window "location" "href"
+                                  "https://www.facebook.com/dawsontrail/")))
+  )
 
 ;; Mouse movement event
 (let [dom-beer-area (.querySelector js/document "#beer-area")]

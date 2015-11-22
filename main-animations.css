@@ -46,6 +46,11 @@
     to   { bottom: 0; }
 }
 
-.color-fade-green {
-    animation: 
+.fade-in-special {
+    animation: fade-in-special 1s;
+}
+
+@keyframes fade-in-special {
+    from { top: 0%; opacity: 0; }
+    to   { top: 20%; opacity: 1; }
 }
