@@ -60,8 +60,8 @@ body {
     position: absolute;
     opacity: 0;
     top: 50px;
-    left: 5px;
-    right: 5px;
+    left: 10px;
+    right: 10px;
     bottom: 50px;
     border-radius: 20px;
     background-color: #8FD987;
@@ -94,7 +94,7 @@ body {
     height: 100px;
     line-height: 100px;
     background-color: #D5B79E;
-    border-radius: 5px;
+    border-radius: 25px;
     border: 2px solid #B3957C;
     font-size: 300%;
     vertical-align: center;
